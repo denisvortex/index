@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Denis Vortex</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        :root {
+            --deep-blue: #0a192f;
+            --electric-blue: #64ffda;
+            --mint-green: #20c997;
+            --light-gray: #ccd6f6;
+            --dark-gray: #1e2a3a;
+        }
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, var(--deep-blue) 0%, #112240 100%);
+            color: var(--light-gray);
+            line-height: 1.6;
+            /* Запрет выделения текста */
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+        }
+        /* Разрешаем выделение для инпутов и текстовых областей */
+        input, textarea {
+            -webkit-user-select: text;
+            -moz-user-select: text;
+            -ms-user-select: text;
+            user-select: text;
+        }
+        
+        header {
+            background: rgba(10, 25, 47, 0.95);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        .nav-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 70px;
+        }
+        .logo { font-size: 1.8rem; font-weight: bold; color: var(--electric-blue); text-decoration: none; }
+        .nav-links { display: flex; list-style: none; gap: 2rem; }
+        .nav-links a { color: var(--light-gray); text-decoration: none; transition: color 0.3s ease; }
+        .nav-links a:hover { color: var(--electric-blue); }
+        
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            padding: 100px 20px 50px;
+            max-width: 1200px;
+            margin: 0 auto;
+            gap: 3rem;
+        }
+        .hero-content { flex: 1; }
+        .hero h1 {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--electric-blue), var(--mint-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .hero-image {
+            flex: 1;
+            text-align: center;
+        }
+        .profile-img {
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            border: 3px solid var(--electric-blue);
+            object-fit: cover;
+            margin: 0 auto;
+            /* Запрет перетаскивания изображений */
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            padding: 12px 30px;
+            background: transparent;
+            color: var(--electric-blue);
+            border: 2px solid var(--electric-blue);
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 10px 10px 0;
+        }
+        .cta-button:hover {
+            background: rgba(100, 255, 218, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .download-button {
+            display: inline-block;
+            padding: 12px 25px;
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--electric-blue);
+            border: 1px solid var(--electric-blue);
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px;
+            min-width: 150px;
+        }
+        .download-button:hover {
+            background: rgba(100, 255, 218, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        section { padding: 80px 20px; max-width: 1200px; margin: 0 auto; }
+        .section-title { text-align: center; font-size: 2rem; margin-bottom: 2rem; color: var(--electric-blue); }
+        
+        .social-links { display: flex; gap: 1rem; margin: 2rem 0; flex-wrap: wrap; }
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 10px 20px;
+            border: 1px solid rgba(100, 255, 218, 0.3);
+            border-radius: 5px;
+            color: var(--light-gray);
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        .social-link:hover {
+            border-color: var(--electric-blue);
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--electric-blue);
+        }
+
+        /* Стили для страницы файлов */
+        .files-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+        
+        .file-category {
+            background: var(--dark-gray);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            text-align: center;
+            /* Фиксируем высоту для одинаковых блоков */
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        
+        .file-category h3 {
+            color: var(--electric-blue);
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        
+        .file-category p {
+            margin-bottom: 1.5rem;
+            opacity: 0.9;
+            flex-grow: 1;
+        }
+
+        /* Стили для горизонтальных сборок */
+        .builds-section {
+            background: var(--dark-gray);
+            padding: 2rem;
+            border-radius: 10px;
+            border: 1px solid rgba(100, 255, 218, 0.1);
+            margin-top: 2rem;
+        }
+        
+        .builds-title {
+            color: var(--electric-blue);
+            text-align: center;
+            margin-bottom: 1rem;
+            font-size: 1.4rem;
+        }
+        
+        .youtube-link {
+            color: var(--mint-green);
+            text-decoration: none;
+            border-bottom: 1px dotted var(--mint-green);
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+        
+        .youtube-link:hover {
+            color: var(--electric-blue);
+            border-bottom-color: var(--electric-blue);
+        }
+        
+        .builds-scroll-container {
+            display: flex;
+            gap: 1.5rem;
+            overflow-x: auto;
+            padding: 1rem 0;
+            scrollbar-width: thin;
+            scrollbar-color: var(--electric-blue) var(--dark-gray);
+        }
+        
+        .builds-scroll-container::-webkit-scrollbar {
+            height: 8px;
+        }
+        
+        .builds-scroll-container::-webkit-scrollbar-track {
+            background: var(--dark-gray);
+            border-radius: 4px;
+        }
+        
+        .builds-scroll-container::-webkit-scrollbar-thumb {
+            background: var(--electric-blue);
+            border-radius: 4px;
+        }
+        
+        .build-card {
+            background: var(--dark-gray);
+            border-radius: 15px;
+            padding: 1.5rem;
+            border: 1px solid rgba(100, 255, 218, 0.2);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+            min-width: 280px;
+            flex-shrink: 0;
+        }
+        
+        .build-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--electric-blue);
+            box-shadow: 0 10px 30px rgba(100, 255, 218, 0.2);
+        }
+        
+        .build-image {
+            width: 100%;
+            height: 150px;
+            border-radius: 10px;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            /* Запрет перетаскивания изображений */
+            -webkit-user-drag: none;
+            -khtml-user-drag: none;
+            -moz-user-drag: none;
+            -o-user-drag: none;
+            user-drag: none;
+        }
+        
+        .build-title {
+            color: var(--electric-blue);
+            font-size: 1.2rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .build-desc {
+            font-size: 0.9rem;
+            opacity: 0.8;
+            margin-bottom: 1rem;
+            min-height: 40px;
+        }
+        
+        /* Эффект Liquid Eye */
+        .liquid-eye {
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .liquid-eye::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(
+                45deg,
+                transparent,
+                rgba(100, 255, 218, 0.1),
+                transparent
+            );
+            transform: rotate(45deg);
+            transition: all 0.6s ease;
+            opacity: 0;
+        }
+        
+        .liquid-eye:hover::before {
+            animation: liquidFlow 1.5s ease-in-out;
+            opacity: 1;
+        }
+        
+        @keyframes liquidFlow {
+            0% {
+                transform: rotate(45deg) translateX(-100%);
+            }
+            100% {
+                transform: rotate(45deg) translateX(100%);
+            }
+        }
+        
+        /* Эффект сияния */
+        .glow-effect {
+            position: relative;
+        }
+        
+        .glow-effect::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            border-radius: 15px;
+            box-shadow: 0 0 20px rgba(100, 255, 218, 0);
+            transition: box-shadow 0.3s ease;
+        }
+        
+        .glow-effect:hover::after {
+            box-shadow: 0 0 30px rgba(100, 255, 218, 0.3);
+        }
+
+        /* Стили для актуального ролика */
+        .video-section {
+            text-align: center;
+            margin: 3rem 0;
+        }
+        
+        .video-container {
+            position: relative;
+            max-width: 800px;
+            margin: 0 auto;
+            border-radius: 15px;
+            overflow: hidden;
+            border: 2px solid rgba(100, 255, 218, 0.3);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        
+        .video-container iframe {
+            width: 100%;
+            height: 450px;
+            border: none;
+        }
+        
+        .video-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 0, 0, 0.9);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            z-index: 10;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .video-info {
+            background: var(--dark-gray);
+            padding: 1.5rem;
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        .video-title {
+            color: var(--electric-blue);
+            font-size: 1.3rem;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        
+        .video-description {
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+        
+        /* Стиль для кастомного контекстного меню */
+        .custom-context-menu {
+            display: none;
+            position: fixed;
+            background: var(--dark-gray);
+            border: 1px solid var(--electric-blue);
+            border-radius: 5px;
+            padding: 10px;
+            z-index: 10000;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        
+        .custom-context-menu button {
+            background: transparent;
+            border: none;
+            color: var(--light-gray);
+            padding: 8px 15px;
+            cursor: pointer;
+            width: 100%;
+            text-align: left;
+            border-radius: 3px;
+        }
+        
+        .custom-context-menu button:hover {
+            background: rgba(100, 255, 218, 0.1);
+            color: var(--electric-blue);
+        }
+        
+        footer {
+            text-align: center;
+            padding: 2rem;
+            background: var(--dark-gray);
+            border-top: 1px solid rgba(100, 255, 218, 0.1);
+        }
+        
+        @media (max-width: 768px) {
+            .nav-links { display: none; }
+            .hero { flex-direction: column; text-align: center; }
+            .hero h1 { font-size: 2.2rem; }
+            .profile-img { width: 250px; height: 250px; }
+            .files-grid { grid-template-columns: 1fr; }
+            .download-button { min-width: 200px; }
+            .builds-scroll-container { gap: 1rem; }
+            .build-card { min-width: 250px; }
+            .video-container iframe { height: 250px; }
+            .file-category { min-height: 200px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- Кастомное контекстное меню -->
+    <div id="customContextMenu" class="custom-context-menu">
+        <button onclick="copyPageUrl()">📋 Копировать ссылку страницы</button>
+        <button onclick="goToTop()">⬆️ Наверх</button>
+        <button onclick="refreshPage()">🔄 Обновить</button>
+    </div>
+
+    <header>
+        <nav class="nav-container">
+            <a href="#" class="logo">Denis Vortex</a>
+            <ul class="nav-links">
+                <li><a href="#home">Главная</a></li>
+                <li><a href="#about">Обо мне</a></li>
+                <li><a href="#video">Актуальный ролик</a></li>
+                <li><a href="#files">Файлы</a></li>
+                <li><a href="#social">Соцсети</a></li>
+                <li><a href="#contact">Контакты</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <section id="home" class="hero">
+        <div class="hero-content">
+            <h1>Привет, меня зовут Денис</h1>
+            <p>Создаю интересный контент и делюсь знаниями в сфере технологий и не только.</p>
+            
+            <div class="social-links">
+                <a href="https://t.me/goyt31" class="social-link" target="_blank">
+                    ✈️ Telegram
+                </a>
+                <a href="https://youtube.com/@DenisVortex" class="social-link" target="_blank">
+                    📺 YouTube
+                </a>
+            </div>
+            
+            <a href="#video" class="cta-button">Смотреть ролик</a>
+            <a href="#files" class="cta-button">Скачать файлы</a>
+        </div>
+        
+        <div class="hero-image">
+            <img src="https://i.postimg.cc/KYJgXpVW/photo-2025-11-03-18-51-07.jpg" alt="Мое фото" class="profile-img">
+        </div>
+    </section>
+
+    <section id="about">
+        <h2 class="section-title">Обо мне</h2>
+        <div style="text-align: center; max-width: 600px; margin: 0 auto;">
+            <p>Делюсь своим опытом и знаниями через контент в Telegram и YouTube. 
+            Люблю изучать новые технологии и рассказывать о них простым языком.</p>
+            
+            <div style="display: flex; flex-wrap: wrap; gap: 1rem; justify-content: center; margin: 2rem 0;">
+                <span style="background: rgba(100, 255, 218, 0.1); color: var(--electric-blue); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(100, 255, 218, 0.3);">
+                    Создание контента
+                </span>
+                <span style="background: rgba(100, 255, 218, 0.1); color: var(--electric-blue); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(100, 255, 218, 0.3);">
+                    Технологии
+                </span>
+                <span style="background: rgba(100, 255, 218, 0.1); color: var(--electric-blue); padding: 8px 16px; border-radius: 20px; border: 1px solid rgba(100, 255, 218, 0.3);">
+                    Обучение
+                </span>
+            </div>
+        </div>
+    </section>
+
+    <section id="video">
+        <h2 class="section-title">🎬 Самый актуальный ролик</h2>
+        <div class="video-section">
+            <div class="video-container">
+                <div class="video-badge">НОВОЕ</div>
+                <!-- ЗАМЕНИТЕ ССЫЛКУ НА ВАШЕ ВИДЕО -->
+                <iframe src="https://www.youtube.com/embed/ВАШ_КОД_ВИДЕО" 
+                        title="Самый актуальный ролик" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+                <div class="video-info">
+                    <div class="video-title">Название вашего самого актуального ролика</div>
+                    <div class="video-description">
+                        Описание вашего ролика. Расскажите о том, что зрители увидят в этом видео и почему это важно.
+                    </div>
+                </div>
+            </div>
+            
+            <div style="margin-top: 2rem;">
+                <a href="https://www.youtube.com/@DenisVortex" class="cta-button" target="_blank">
+                    📺 Смотреть больше на YouTube
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="files">
+        <h2 class="section-title">Файлы для скачивания</h2>
+
+        <!-- Горизонтальные сборки Windows -->
+        <div class="builds-section">
+            <h3 class="builds-title">
+                🖥️ Сборки Windows 
+                <a href="https://www.youtube.com/@MakuAdarii" class="youtube-link" target="_blank">
+                    by youtuber Mark Adderly
+                </a>
+            </h3>
+            <p style="text-align: center; margin-bottom: 2rem; opacity: 0.9;">
+                Мои оптимизированные сборки Windows для различных задач
+            </p>
+            
+            <div class="builds-scroll-container">
+                <!-- Карточка Windows 7 -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win7.png" alt="Windows 7" class="build-image">
+                    <div class="build-title">Windows 7</div>
+                    <div class="build-desc">Классическая стабильная сборка</div>
+                    <a href="https://pixeldrain.com/u/SHW1DnMn" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 8.1 -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win8.jpg" alt="Windows 8.1" class="build-image">
+                    <div class="build-title">Windows 8.1</div>
+                    <div class="build-desc">Обновленная версия Windows 8</div>
+                    <a href="https://pixeldrain.com/u/QuKAqNin" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 10 Lite -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win10old.jpg" alt="Windows 10 Lite" class="build-image">
+                    <div class="build-title">Windows 10 Lite</div>
+                    <div class="build-desc">Облегченная версия Windows 10</div>
+                    <a href="https://pixeldrain.com/u/KHVPVhyh" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 10 Mini -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win10.jpg" alt="Windows 10 Mini" class="build-image">
+                    <div class="build-title">Windows 10 Mini</div>
+                    <div class="build-desc">Минималистичная сборка</div>
+                    <a href="https://pixeldrain.com/u/ofmbZcFv" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 11 Lite -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win11.jpg" alt="Windows 11 Lite" class="build-image">
+                    <div class="build-title">Windows 11 Lite</div>
+                    <div class="build-desc">Оптимизированная Windows 11</div>
+                    <a href="https://pixeldrain.com/u/6aCam7Zz" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 11 LTSC V2 -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win11shit.png" alt="Windows 11 LTSC V2" class="build-image">
+                    <div class="build-title">Windows 11 LTSC V2</div>
+                    <div class="build-desc">Долгосрочная сервисная версия</div>
+                    <a href="https://pixeldrain.com/u/TL34HRpL" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка Windows 10 LTSC V2 -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/win10.jpg" alt="Windows 10 LTSC V2" class="build-image">
+                    <div class="build-title">Windows 10 LTSC V2</div>
+                    <div class="build-desc">Стабильная LTSC версия</div>
+                    <a href="https://pixeldrain.com/u/yBuCjqNx" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+
+                <!-- Карточка WinPE V2 -->
+                <div class="build-card liquid-eye glow-effect">
+                    <img src="https://adderly.top/images/winpe/winpe1.png" alt="WinPE V2" class="build-image">
+                    <div class="build-title">WinPE V2</div>
+                    <div class="build-desc">Preinstallation Environment</div>
+                    <a href="https://www.mediafire.com/file/i7lm360jq643v24/MakuPE+V2.iso/file" class="download-button" target="_blank">
+                        Скачать
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Остальные категории файлов -->
+        <div class="files-grid">
+            <!-- Мои приложения -->
+            <div class="file-category">
+                <h3>📱 Мои приложения</h3>
+                <p>Полезные утилиты и программы для оптимизации</p>
+                <a href="https://t.me/DenisVortexbasefile" class="download-button" target="_blank">
+                    Скачать приложения
+                </a>
+            </div>
+
+            <!-- Файлы из роликов -->
+            <div class="file-category">
+                <h3>🎬 Файлы из роликов</h3>
+                <p>Конфиги, скрипты и материалы из моих видео</p>
+                <a href="https://t.me/DenisVortexbasefile" class="download-button" target="_blank">
+                    Скачать файлы
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <section id="social">
+        <h2 class="section-title">Мои соцсети</h2>
+        <div style="text-align: center;">
+            <p>Подписывайтесь на мои каналы, чтобы быть в курсе нового контента!</p>
+            
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 2rem; margin-top: 3rem;">
+                <div style="background: var(--dark-gray); padding: 2rem; border-radius: 10px; border: 1px solid rgba(100, 255, 218, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">✈️</div>
+                    <h3 style="color: var(--electric-blue); margin-bottom: 1rem;">Telegram</h3>
+                    <p>Ежедневные посты, новости и полезные материалы</p>
+                    <a href="https://t.me/VortexDenis" class="cta-button" style="margin-top: 1rem;">Подписаться</a>
+                </div>
+                
+                <div style="background: var(--dark-gray); padding: 2rem; border-radius: 10px; border: 1px solid rgba(100, 255, 218, 0.1);">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📺</div>
+                    <h3 style="color: var(--electric-blue); margin-bottom: 1rem;">YouTube</h3>
+                    <p>Видео-уроки, обзоры и образовательный контент</p>
+                    <a href="https://www.youtube.com/@DenisVortex" class="cta-button" style="margin-top: 1rem;">Подписаться</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="contact">
+        <h2 class="section-title">Контакты</h2>
+        <div style="text-align: center;">
+            <p>Свяжитесь со мной через соцсети для сотрудничества!</p>
+            
+            <div class="social-links" style="justify-content: center;">
+                <a href="https://t.me/goyt31" class="social-link">
+                    ✈️ Написать в Telegram
+                </a>
+                <a href="https://www.youtube.com/@DenisVortex" class="social-link">
+                    📺 Мой YouTube
+                </a>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Denis Vortex. Все права защищены.</p>
+    </footer>
+
+    <script>
+        // Блокировка контекстного меню
+        document.addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            showCustomContextMenu(e.clientX, e.clientY);
+        });
+
+        // Скрытие кастомного меню при клике
+        document.addEventListener('click', function() {
+            hideCustomContextMenu();
+        });
+
+        // Функции для кастомного контекстного меню
+        function showCustomContextMenu(x, y) {
+            const menu = document.getElementById('customContextMenu');
+            menu.style.display = 'block';
+            menu.style.left = x + 'px';
+            menu.style.top = y + 'px';
+        }
+
+        function hideCustomContextMenu() {
+            const menu = document.getElementById('customContextMenu');
+            menu.style.display = 'none';
+        }
+
+        function copyPageUrl() {
+            navigator.clipboard.writeText(window.location.href).then(function() {
+                alert('Ссылка скопирована в буфер обмена!');
+            });
+            hideCustomContextMenu();
+        }
+
+        function goToTop() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+            hideCustomContextMenu();
+        }
+
+        function refreshPage() {
+            location.reload();
+        }
+
+        // Блокировка комбинаций клавиш
+        document.addEventListener('keydown', function(e) {
+            // Ctrl+U (просмотр исходного кода)
+            if (e.ctrlKey && e.key === 'u') {
+                e.preventDefault();
+                return false;
+            }
+            // F12 (инструменты разработчика)
+            if (e.key === 'F12') {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+I (инструменты разработчика)
+            if (e.ctrlKey && e.shiftKey && e.key === 'I') {
+                e.preventDefault();
+                return false;
+            }
+            // Ctrl+Shift+C (инспектор)
+            if (e.ctrlKey && e.shiftKey && e.key === 'C') {
+                e.preventDefault();
+                return false;
+            }
+        });
+
+        // Плавная прокрутка
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                if (target) {
+                    target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
