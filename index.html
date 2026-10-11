@@ -130,7 +130,7 @@
         .tech-tags { display: flex; flex-wrap: wrap; gap: 8px; }
         .tech-tag { background: rgba(128, 128, 128, 0.1); padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; font-weight: 600; color: var(--text-muted); }
         
-        /* Компилятор (Web + C++ + Python) */
+        /* Компилятор */
         .compiler-layout { display: flex; flex-direction: column; gap: 20px; height: 75vh; }
         @media (min-width: 900px) { .compiler-layout { flex-direction: row; } }
         .compiler-panel { flex: 1; display: flex; flex-direction: column; background: var(--bg-card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; backdrop-filter: blur(12px); }
@@ -163,6 +163,8 @@
         .ttt-cell.o { color: #ef4444; }
         .reaction-box { width: 100%; height: 200px; border-radius: var(--radius-lg); border: 2px solid var(--border); display: flex; align-items: center; justify-content: center; font-size: 1.2rem; font-weight: 700; cursor: pointer; transition: background 0.1s; background: rgba(128,128,128,0.1); }
         #snakeCanvas { background: #111; border: 2px solid var(--accent); border-radius: 12px; margin: 0 auto; display: block; box-shadow: 0 0 15px rgba(0,0,0,0.2);}
+        .video-container { border-radius: var(--radius-lg); overflow: hidden; position: relative; padding-bottom: 56.25%; background: #000; border: 1px solid var(--border); }
+        .video-container iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
 
         @media (max-width: 900px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } .bento-profile, .bento-builds-link { grid-column: span 2; } }
         @media (max-width: 768px) {
@@ -246,6 +248,9 @@
             <div class="glass-card project-card"><div style="font-size: 2.5rem;">🖥️</div><h3>CrossPlatform App</h3><p data-i18n="proj2">Утилита для мониторинга системных ресурсов. Windows, macOS и Linux.</p><div class="tech-tags"><span class="tech-tag">C++</span><span class="tech-tag">Qt</span></div></div>
             <div class="glass-card project-card"><div style="font-size: 2.5rem;">🌤️</div><h3>Memory Weather</h3><p data-i18n="proj3">Умный сайт прогноза погоды, совмещенный с личным дневником.</p><div class="tech-tags"><span class="tech-tag">React</span><span class="tech-tag">Node.js</span></div></div>
         </div>
+
+        <h2 class="section-title" id="video" data-i18n="youtube_new">Свежее на YouTube</h2>
+        <div class="video-container"><iframe src="https://www.youtube.com/embed/FZd0q0lNcZ8" title="YouTube" allowfullscreen></iframe></div>
     </div>
 
     <!-- СТРАНИЦА СБОРОК -->
@@ -255,12 +260,12 @@
         <div class="builds-grid" id="builds-grid-container"></div>
     </div>
 
-    <!-- ДЕТАЛЬНАЯ СТРАНИЦА -->
+    <!-- ДЕТАЛЬНАЯ СТРАНИЦА СБОРКИ -->
     <div id="page-detail" class="container page-section"></div>
 
-    <!-- СТРАНИЦА КОМПИЛЯТОРА (С ПОДДЕРЖКОЙ PYTHON И C++) -->
+    <!-- СТРАНИЦА КОМПИЛЯТОРА -->
     <div id="page-compiler" class="container page-section">
-        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;" data-i18n="compiler_title">Web IDE Alpha version</h1>
+        <h1 style="font-size: 2.5rem; font-weight: 800; margin-bottom: 16px;" data-i18n="compiler_title">Web IDE</h1>
         <p style="color: var(--text-muted); margin-bottom: 30px;" data-i18n="compiler_desc">Пиши и компилируй HTML/JS, Python, C++ и Java прямо в браузере!</p>
         
         <div class="compiler-layout">
@@ -277,10 +282,8 @@
                 <textarea id="codeEditor" class="compiler-textarea" spellcheck="false" onkeydown="handleTab(event)"></textarea>
             </div>
             <div class="compiler-panel">
-                <div class="compiler-header" data-i18n="compiler_output">Output</div>
-                <!-- Фрейм для Web -->
+                <div class="compiler-header" data-i18n="compiler_output">Output / Консоль</div>
                 <iframe id="codeOutputWeb" class="compiler-iframe"></iframe>
-                <!-- Консоль для Python, C++, Java -->
                 <pre id="codeOutputConsole" class="compiler-console" style="display: none;"></pre>
             </div>
         </div>
@@ -298,7 +301,6 @@
                 <div class="game-tab" onclick="switchGameTab('snake')" data-i18n="game_snake">Змейка</div>
             </div>
 
-            <!-- Крестики-Нолики -->
             <div id="game-tictactoe" class="game-view active">
                 <div style="margin-bottom: 16px;">
                     <button class="game-ctrl-btn" id="btn-bot-toggle" onclick="toggleBotMode()">🤖 С ботом</button>
@@ -312,13 +314,11 @@
                 <p id="ttt-status" style="margin-top: 16px; font-weight: bold; color: var(--accent);">Ходит: X</p>
             </div>
 
-            <!-- Реакция -->
             <div id="game-reaction" class="game-view">
                 <p style="color: var(--text-muted); margin-bottom: 16px;" data-i18n="react_hint">Кликни, как только блок станет зеленым!</p>
                 <div class="reaction-box" id="reactionBox" onclick="handleReactionClick()" data-i18n="react_start">Кликни, чтобы начать</div>
             </div>
 
-            <!-- Змейка -->
             <div id="game-snake" class="game-view">
                 <p style="color: var(--text-muted); margin-bottom: 10px;" data-i18n="snake_hint">Стрелочки для управления</p>
                 <div style="margin-bottom: 10px;">
@@ -331,13 +331,17 @@
     </div>
 
     <script>
-        // Защита
+        // ==========================================
+        // ЗАЩИТА (ANTI-THEFT)
+        // ==========================================
         document.addEventListener('contextmenu', e => e.preventDefault());
         document.addEventListener('keydown', function(e) {
             if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C')) || (e.ctrlKey && (e.key === 'U' || e.key === 'S'))) { e.preventDefault(); }
         });
 
-        // Светлая / Темная тема
+        // ==========================================
+        // СМЕНА ТЕМЫ
+        // ==========================================
         function toggleLightDarkMode() {
             document.body.classList.toggle('light-theme');
             const isLight = document.body.classList.contains('light-theme');
@@ -350,10 +354,7 @@
         } else { document.getElementById('modeBtn').innerText = '☀️'; }
 
         // Цвет темы
-        const colors = [
-            {accent: '#3b82f6', glow: '#60a5fa'}, {accent: '#8b5cf6', glow: '#a78bfa'}, 
-            {accent: '#10b981', glow: '#34d399'}, {accent: '#ef4444', glow: '#f87171'}
-        ];
+        const colors = [ {accent: '#3b82f6', glow: '#60a5fa'}, {accent: '#8b5cf6', glow: '#a78bfa'}, {accent: '#10b981', glow: '#34d399'}, {accent: '#ef4444', glow: '#f87171'} ];
         let currentColorIdx = 0;
         function toggleThemeColor() {
             currentColorIdx = (currentColorIdx + 1) % colors.length;
@@ -375,7 +376,6 @@
                 }
             } else { secretPos = 0; }
         });
-
         const mCanvas = document.getElementById('matrixCanvas'); const ctx = mCanvas.getContext('2d'); let matrixInterval;
         function initMatrix() {
             mCanvas.width = window.innerWidth; mCanvas.height = window.innerHeight;
@@ -398,7 +398,7 @@
         }
 
         // ==========================================
-        // WEB IDE: HTML + PYTHON + C++ (Piston API)
+        // WEB IDE
         // ==========================================
         const ideTemplates = {
             web: `<style>\n  body { display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; background: #1a1a2e; font-family: sans-serif; }\n  .glow-btn { padding: 15px 30px; font-size: 18px; color: white; background: #0f3460; border: 2px solid #e94560; border-radius: 8px; cursor: pointer; transition: 0.3s; }\n  .glow-btn:hover { box-shadow: 0 0 20px #e94560; }\n</style>\n\n<button class="glow-btn" onclick="alert('Hello from Denis Vortex!')">\n  Кликни меня\n</button>`,
@@ -406,7 +406,6 @@
             cpp: `#include <iostream>\n\nint main() {\n    std::cout << "Hello from Denis Vortex!" << std::endl;\n    return 0;\n}`,
             java: `public class Main {\n    public static void main(String[] args) {\n        System.out.println("Hello from Denis Vortex!");\n    }\n}`
         };
-
         function changeIdeLang() {
             const lang = document.getElementById('ideLang').value;
             document.getElementById('codeEditor').value = ideTemplates[lang];
@@ -419,7 +418,6 @@
                 document.getElementById('codeOutputConsole').innerText = 'Нажми "Run", чтобы скомпилировать и выполнить код...';
             }
         }
-
         async function runCodeCode() {
             const lang = document.getElementById('ideLang').value;
             const code = document.getElementById('codeEditor').value;
@@ -443,35 +441,37 @@
                         body: JSON.stringify({ language: pLang, version: pVer, files: [{ content: code }] })
                     });
                     const result = await response.json();
-                    if (result.run && result.run.output) {
-                        consoleOut.innerText = result.run.output;
-                    } else if (result.message) {
-                        consoleOut.innerText = "Error: " + result.message;
-                    } else {
-                        consoleOut.innerText = "Неизвестная ошибка выполнения.";
-                    }
-                } catch (e) {
-                    consoleOut.innerText = "Ошибка соединения с сервером Piston API.\nПроверьте интернет.";
-                }
+                    if (result.run && result.run.output) { consoleOut.innerText = result.run.output; } 
+                    else if (result.message) { consoleOut.innerText = "Error: " + result.message; } 
+                    else { consoleOut.innerText = "Неизвестная ошибка выполнения."; }
+                } catch (e) { consoleOut.innerText = "Ошибка соединения с сервером Piston API.\nПроверьте интернет."; }
                 btn.innerText = '▶ Run'; btn.disabled = false;
             }
         }
-
         function handleTab(e) {
             if (e.key == 'Tab') {
-                e.preventDefault();
-                const start = e.target.selectionStart; const end = e.target.selectionEnd;
+                e.preventDefault(); const start = e.target.selectionStart; const end = e.target.selectionEnd;
                 e.target.value = e.target.value.substring(0, start) + "    " + e.target.value.substring(end);
                 e.target.selectionStart = e.target.selectionEnd = start + 4;
             }
         }
         setTimeout(() => { changeIdeLang(); runCodeCode(); }, 500);
 
-        // Локализация
+        // ==========================================
+        // ПОЛНАЯ ЛОКАЛИЗАЦИЯ (i18n) НА 9 ЯЗЫКОВ
+        // ==========================================
         const translations = {
             ru: { nav_home: "Главная", nav_builds: "Сборки", nav_projects: "Проекты", nav_code: "💻 Код", nav_games: "🎮 Игры", rank: "Ранг:", clicks: "Клик:", profile_desc: "Разработчик (C++/Qt, React, TS). Создаю авторские оптимизированные сборки Windows и open-source проекты.", stat_commits: "коммита в 2026", stat_builds: "сборок Win", catalog: "Каталог", win_builds: "Сборки Windows", curr_projects: "Текущие проекты", proj1: "AI-ассистент для автоматического code review прямо в Telegram.", proj2: "Утилита для мониторинга системных ресурсов. Windows, macOS и Linux.", proj3: "Умный сайт прогноза погоды, совмещенный с личным дневником.", youtube_new: "Свежее на YouTube", builds_desc: "Максимально оптимизированные образы без лишнего мусора.", compiler_title: "Web IDE", compiler_desc: "Пиши и компилируй HTML/JS, Python, C++ и Java прямо в браузере!", btn_run: "▶ Run", compiler_output: "Output / Консоль", game_ttt: "Крестики-Нолики", game_react: "Реакция", game_snake: "Змейка", btn_reset: "Сброс", btn_start: "Старт", react_hint: "Кликни, как только блок станет зеленым!", react_start: "Кликни, чтобы начать", snake_hint: "Стрелочки для управления", btn_back: "← Назад", btn_dl: "📥 Скачать ISO", size_iso: "Размер ISO", cat: "Категория", bot_on: "🤖 С ботом", bot_off: "👥 2 Игрока" },
-            en: { nav_home: "Home", nav_builds: "Builds", nav_projects: "Projects", nav_code: "💻 Code", nav_games: "🎮 Games", rank: "Rank:", clicks: "Clicks:", profile_desc: "Developer (C++/Qt, React, TS). Custom optimized Windows builds and open-source projects.", stat_commits: "commits in 2026", stat_builds: "Win builds", catalog: "Catalog", win_builds: "Windows Builds", curr_projects: "Current Projects", proj1: "AI assistant for automated code review in Telegram.", proj2: "System resource monitoring utility. Native on Windows, macOS, Linux.", proj3: "Smart weather website combined with a personal diary.", youtube_new: "Latest on YouTube", builds_desc: "Maximally optimized images without unnecessary bloatware.", compiler_title: "Web IDE", compiler_desc: "Write and compile HTML, Python, C++ and Java right in your browser!", btn_run: "▶ Run", compiler_output: "Output / Console", game_ttt: "Tic-Tac-Toe", game_react: "Reaction", game_snake: "Snake", btn_reset: "Reset", btn_start: "Start", react_hint: "Click as soon as the box turns green!", react_start: "Click to start", snake_hint: "Use arrows to move", btn_back: "← Back", btn_dl: "📥 Download", size_iso: "ISO Size", cat: "Category", bot_on: "🤖 Vs Bot", bot_off: "👥 2 Players" },
+            en: { nav_home: "Home", nav_builds: "Builds", nav_projects: "Projects", nav_code: "💻 Code", nav_games: "🎮 Games", rank: "Rank:", clicks: "Clicks:", profile_desc: "Developer (C++/Qt, React, TS). Creating custom optimized Windows builds and open-source projects.", stat_commits: "commits in 2026", stat_builds: "Win builds", catalog: "Catalog", win_builds: "Windows Builds", curr_projects: "Current Projects", proj1: "AI assistant for automated code review in Telegram.", proj2: "System resource monitoring utility. Native on Windows, macOS, Linux.", proj3: "Smart weather website combined with a personal diary.", youtube_new: "Latest on YouTube", builds_desc: "Maximally optimized images without unnecessary bloatware.", compiler_title: "Web IDE", compiler_desc: "Write and compile HTML, Python, C++ and Java right in your browser!", btn_run: "▶ Run", compiler_output: "Output / Console", game_ttt: "Tic-Tac-Toe", game_react: "Reaction", game_snake: "Snake", btn_reset: "Reset", btn_start: "Start", react_hint: "Click as soon as the box turns green!", react_start: "Click to start", snake_hint: "Use arrows to move", btn_back: "← Back", btn_dl: "📥 Download ISO", size_iso: "ISO Size", cat: "Category", bot_on: "🤖 Vs Bot", bot_off: "👥 2 Players" },
+            uk: { nav_home: "Головна", nav_builds: "Збірки", nav_projects: "Проєкти", nav_code: "💻 Код", nav_games: "🎮 Ігри", rank: "Ранг:", clicks: "Кліки:", profile_desc: "Розробник (C++/Qt, React, TS). Створюю авторські оптимізовані збірки Windows та open-source проєкти.", stat_commits: "коміти у 2026", stat_builds: "збірок Win", catalog: "Каталог", win_builds: "Збірки Windows", curr_projects: "Поточні проєкти", proj1: "AI-асистент для автоматичного code review у Telegram.", proj2: "Утиліта для моніторингу системних ресурсів. Windows, macOS та Linux.", proj3: "Розумний сайт прогнозу погоди, поєднаний з особистим щоденником.", youtube_new: "Свіже на YouTube", builds_desc: "Максимально оптимізовані образи без зайвого сміття.", compiler_title: "Web IDE", compiler_desc: "Пиши та компілюй HTML/JS, Python, C++ і Java у браузері!", btn_run: "▶ Run", compiler_output: "Результат", game_ttt: "Хрестики-нулики", game_react: "Реакція", game_snake: "Змійка", btn_reset: "Скинути", btn_start: "Старт", react_hint: "Клікни, як тільки блок стане зеленим!", react_start: "Клікни, щоб почати", snake_hint: "Стрілочки для керування", btn_back: "← Назад", btn_dl: "📥 Завантажити ISO", size_iso: "Розмір", cat: "Категорія", bot_on: "🤖 З ботом", bot_off: "👥 2 Гравці" },
+            be: { nav_home: "Галоўная", nav_builds: "Зборкі", nav_projects: "Праекты", nav_code: "💻 Код", nav_games: "🎮 Гульні", rank: "Ранг:", clicks: "Клікі:", profile_desc: "Распрацоўшчык (C++/Qt, React, TS). Ствараю аўтарскія аптымізаваныя зборкі Windows і open-source праекты.", stat_commits: "каміты ў 2026", stat_builds: "зборак Win", catalog: "Каталог", win_builds: "Зборкі Windows", curr_projects: "Бягучыя праекты", proj1: "AI-асістэнт для аўтаматычнага code review ў Telegram.", proj2: "Утыліта для маніторынгу сістэмных рэсурсаў. Windows, macOS і Linux.", proj3: "Разумны сайт прагнозу надвор'я з асабістым дзённікам.", youtube_new: "Свежае на YouTube", builds_desc: "Максімальна аптымізаваныя вобразы без лішняга смецця.", compiler_title: "Web IDE", compiler_desc: "Пішы і кампілюй HTML/JS, Python, C++ і Java ў браўзеры!", btn_run: "▶ Run", compiler_output: "Вынік", game_ttt: "Крыжыкі-нулікі", game_react: "Рэакцыя", game_snake: "Змейка", btn_reset: "Скінуць", btn_start: "Старт", react_hint: "Клікні, як толькі блок стане зялёным!", react_start: "Клікні, каб пачаць", snake_hint: "Стрэлачкі для кіравання", btn_back: "← Назад", btn_dl: "📥 Спампаваць ISO", size_iso: "Памер", cat: "Катэгорыя", bot_on: "🤖 З ботам", bot_off: "👥 2 Гульца" },
+            kk: { nav_home: "Басты", nav_builds: "Жинақтар", nav_projects: "Жобалар", nav_code: "💻 Код", nav_games: "🎮 Ойындар", rank: "Дәреже:", clicks: "Шерту:", profile_desc: "Әзірлеуші (C++/Qt, React, TS). Windows авторлық оңтайландырылған жинақтарын және open-source жобаларын жасаймын.", stat_commits: "2026 жылғы коммиттер", stat_builds: "Win жинағы", catalog: "Каталог", win_builds: "Windows жинақтары", curr_projects: "Ағымдағы жобалар", proj1: "Telegram-да автоматты code review жасайтын AI-көмекші.", proj2: "Жүйелік ресурстарды бақылауға арналған утилита. Windows, macOS, Linux.", proj3: "Жеке күнделікпен біріктірілген ақылды ауа райы сайты.", youtube_new: "YouTube-тегі жаңалықтар", builds_desc: "Қоқыссыз барынша оңтайландырылған бейнелер.", compiler_title: "Web IDE", compiler_desc: "Браузерде HTML/JS, Python, C++ және Java жаз және компиляцияла!", btn_run: "▶ Run", compiler_output: "Нәтиже", game_ttt: "Крестиктер-нөлдіктер", game_react: "Реакция", game_snake: "Жылан", btn_reset: "Қайтару", btn_start: "Бастау", react_hint: "Блок жасыл болғанда басыңыз!", react_start: "Бастау үшін басыңыз", snake_hint: "Басқару үшін көрсеткілерді пайдаланыңыз", btn_back: "← Артқа", btn_dl: "📥 Жүктеу", size_iso: "Көлемі", cat: "Санат", bot_on: "🤖 Ботпен", bot_off: "👥 2 Ойыншы" },
+            zh: { nav_home: "主页", nav_builds: "系统镜像", nav_projects: "项目", nav_code: "💻 代码", nav_games: "🎮 游戏", rank: "等级:", clicks: "点击:", profile_desc: "开发者 (C++/Qt, React, TS)。创建自定义优化的Windows镜像和开源项目。", stat_commits: "2026年提交", stat_builds: "Win镜像", catalog: "目录", win_builds: "Windows 镜像", curr_projects: "当前项目", proj1: "Telegram中的自动代码审查AI助手。", proj2: "系统资源监控实用程序。支持Windows, macOS和Linux。", proj3: "结合个人日记和提醒系统的智能天气网站。", youtube_new: "YouTube最新", builds_desc: "没有多余软件的最高度优化镜像。", compiler_title: "Web IDE", compiler_desc: "在浏览器中编写并编译HTML/JS、Python、C++和Java！", btn_run: "▶ 运行", compiler_output: "输出", game_ttt: "井字游戏", game_react: "反应测试", game_snake: "贪吃蛇", btn_reset: "重置", btn_start: "开始", react_hint: "当方块变绿时立即点击！", react_start: "点击开始", snake_hint: "使用箭头键移动", btn_back: "← 返回", btn_dl: "📥 下载 ISO", size_iso: "大小", cat: "类别", bot_on: "🤖 人机", bot_off: "👥 双人" },
+            id: { nav_home: "Beranda", nav_builds: "Builds", nav_projects: "Proyek", nav_code: "💻 Kode", nav_games: "🎮 Game", rank: "Pangkat:", clicks: "Klik:", profile_desc: "Developer (C++/Qt, React, TS). Membuat build Windows kustom yang dioptimalkan & proyek open-source.", stat_commits: "commit di 2026", stat_builds: "Build Win", catalog: "Katalog", win_builds: "Build Windows", curr_projects: "Proyek Saat Ini", proj1: "Asisten AI untuk tinjauan kode otomatis di Telegram.", proj2: "Utilitas pemantauan sumber daya sistem. Asli di Windows, macOS, Linux.", proj3: "Situs cuaca pintar dikombinasikan dengan buku harian pribadi.", youtube_new: "Terbaru di YouTube", builds_desc: "Gambar yang dioptimalkan secara maksimal tanpa bloatware.", compiler_title: "Web IDE", compiler_desc: "Tulis & kompilasi HTML/JS, Python, C++ & Java di browser Anda!", btn_run: "▶ Jalankan", compiler_output: "Output", game_ttt: "Tic-Tac-Toe", game_react: "Reaksi", game_snake: "Ular", btn_reset: "Ulangi", btn_start: "Mulai", react_hint: "Klik segera setelah kotak menjadi hijau!", react_start: "Klik untuk memulai", snake_hint: "Gunakan panah untuk bergerak", btn_back: "← Kembali", btn_dl: "📥 Unduh ISO", size_iso: "Ukuran", cat: "Kategori", bot_on: "🤖 Lawan Bot", bot_off: "👥 2 Pemain" },
+            ja: { nav_home: "ホーム", nav_builds: "ビルド", nav_projects: "プロジェクト", nav_code: "💻 コード", nav_games: "🎮 ゲーム", rank: "ランク:", clicks: "クリック:", profile_desc: "開発者 (C++/Qt, React, TS)。カスタム最適化されたWindowsビルドとオープンソースプロジェクト。", stat_commits: "2026年のコミット", stat_builds: "Winビルド", catalog: "カタログ", win_builds: "Windows ビルド", curr_projects: "現在のプロジェクト", proj1: "Telegramでの自動コードレビューAIアシスタント。", proj2: "システムリソース監視ユーティリティ。Windows、macOS、Linux。", proj3: "個人的な日記と組み合わせたスマートな天気サイト。", youtube_new: "YouTubeの最新", builds_desc: "不要なブロートウェアのない最適化されたイメージ。", compiler_title: "Web IDE", compiler_desc: "ブラウザでHTML/JS、Python、C++、Javaを作成してコンパイル！", btn_run: "▶ 実行", compiler_output: "出力", game_ttt: "三目並べ", game_react: "反応", game_snake: "ヘビゲーム", btn_reset: "リセット", btn_start: "開始", react_hint: "ボックスが緑色になったらクリック！", react_start: "クリックして開始", snake_hint: "矢印キーで移動", btn_back: "← 戻る", btn_dl: "📥 ダウンロード", size_iso: "サイズ", cat: "カテゴリー", bot_on: "🤖 ボット", bot_off: "👥 2人プレイ" },
+            es: { nav_home: "Inicio", nav_builds: "Builds", nav_projects: "Proyectos", nav_code: "💻 Código", nav_games: "🎮 Juegos", rank: "Rango:", clicks: "Clics:", profile_desc: "Desarrollador (C++/Qt, React, TS). Creando builds de Windows optimizadas y proyectos open-source.", stat_commits: "commits en 2026", stat_builds: "Builds Win", catalog: "Catálogo", win_builds: "Builds de Windows", curr_projects: "Proyectos Actuales", proj1: "Asistente de IA para revisión automática de código en Telegram.", proj2: "Utilidad de monitoreo de recursos. Nativo en Windows, macOS, Linux.", proj3: "Sitio web de clima inteligente combinado con diario personal.", youtube_new: "En YouTube", builds_desc: "Imágenes optimizadas sin bloatware innecesario.", compiler_title: "Web IDE", compiler_desc: "¡Escribe y compila HTML/JS, Python, C++ y Java en tu navegador!", btn_run: "▶ Ejecutar", compiler_output: "Salida", game_ttt: "Tres en raya", game_react: "Reacción", game_snake: "Serpiente", btn_reset: "Reiniciar", btn_start: "Empezar", react_hint: "¡Haz clic cuando el cuadro se vuelva verde!", react_start: "Haz clic para empezar", snake_hint: "Usa las flechas para moverte", btn_back: "← Volver", btn_dl: "📥 Descargar ISO", size_iso: "Tamaño", cat: "Categoría", bot_on: "🤖 Vs Bot", bot_off: "👥 2 Jugadores" }
         };
+
         let currentLang = 'ru';
         function changeLanguage(lang) {
             currentLang = lang;
@@ -481,6 +481,12 @@
                 if (translations[lang][key]) el.innerText = translations[lang][key];
             });
             document.getElementById('btn-bot-toggle').innerText = isBotMode ? (translations[lang]['bot_on'] || "🤖") : (translations[lang]['bot_off'] || "👥");
+            
+            // Если мы находимся на странице сборки, нужно перерисовать её, чтобы перевести
+            const activeDetail = document.querySelector('.build-detail-id');
+            if(activeDetail && document.getElementById('page-detail').classList.contains('active')) {
+                showBuildDetail(activeDetail.innerText);
+            }
         }
 
         // Аватар Кликер
@@ -558,7 +564,7 @@
         }
         function startReaction() {
             reactionBox.style.background = 'rgba(245,158,11,0.5)'; reactionBox.innerText = (currentLang === 'ru') ? 'ЖДИ...' : 'WAIT...';
-            reactionTimeout = setTimeout(() => { reactionBox.style.background = 'rgba(16,185,129,0.8)'; reactionBox.innerText = 'КЛИКАЙ!'; reactionStartTime = Date.now(); }, Math.random() * 3000 + 1500);
+            reactionTimeout = setTimeout(() => { reactionBox.style.background = 'rgba(16,185,129,0.8)'; reactionBox.innerText = 'КЛИКАЙ! / CLICK!'; reactionStartTime = Date.now(); }, Math.random() * 3000 + 1500);
         }
 
         // Змейка
@@ -606,7 +612,7 @@
 
         function renderBuilds() {
             document.getElementById('builds-grid-container').innerHTML = builds.map(b => `
-                <div class="glass-card" onclick="showBuildDetail('${b.id}')" style="padding:0; cursor:pointer;">
+                <div class="glass-card build-card" onclick="showBuildDetail('${b.id}')" style="padding:0; cursor:pointer;">
                     <img src="${b.image}" class="build-img" style="width:100%; height:200px; object-fit:cover; border-bottom:1px solid var(--border);">
                     <div style="padding:24px;">
                         <span style="display:inline-block; padding:4px 10px; background:rgba(128,128,128,0.1); color:var(--accent); border:1px solid var(--accent); border-radius:6px; font-size:0.8rem; font-weight:700; margin-bottom:12px;">${b.version}</span>
@@ -623,14 +629,23 @@
         function showBuildDetail(id) {
             const b = builds.find(x => x.id === id); if (!b) return;
             document.getElementById('page-detail').innerHTML = `
-                <button onclick="showPage('builds')" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 24px;">← Назад</button>
+                <div class="build-detail-id" style="display:none;">${id}</div>
+                <button onclick="showPage('builds')" style="background: var(--bg-card); color: var(--text-main); border: 1px solid var(--border); padding: 10px 20px; border-radius: 8px; cursor: pointer; margin-bottom: 24px;" data-i18n="btn_back">${translations[currentLang]['btn_back'] || '← Назад'}</button>
                 <div class="glass-card" style="padding: 0; display: flex; flex-wrap: wrap;">
                     <div style="flex: 1; min-width: 300px;"><img src="${b.image}" style="width: 100%; height: 100%; object-fit: cover;"></div>
                     <div style="flex: 1; min-width: 300px; padding: 40px;">
                         <span style="display:inline-block; padding:4px 10px; background:rgba(128,128,128,0.1); color:var(--accent); border:1px solid var(--accent); border-radius:6px; font-size:0.8rem; font-weight:700; margin-bottom:12px;">${b.version}</span>
                         <h1 style="font-size: 2.5rem; margin-bottom: 16px;">${b.title}</h1>
                         <p style="color: var(--text-muted); font-size: 1.1rem; line-height: 1.6; margin-bottom: 32px;">${b.description}</p>
-                        <a href="${b.url}" target="_blank" style="display: inline-block; background: var(--accent); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: 700;">Скачать ISO</a>
+                        <div style="display: flex; gap: 16px; margin-bottom: 32px; flex-wrap: wrap;">
+                            <div style="background: rgba(128,128,128,0.1); padding: 16px; border-radius: 12px; min-width: 120px;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;" data-i18n="size_iso">${translations[currentLang]['size_iso'] || 'Размер ISO'}</div><div style="font-weight: 700; font-size: 1.1rem;">${b.size}</div>
+                            </div>
+                            <div style="background: rgba(128,128,128,0.1); padding: 16px; border-radius: 12px; min-width: 120px;">
+                                <div style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 4px;" data-i18n="cat">${translations[currentLang]['cat'] || 'Категория'}</div><div style="font-weight: 700; font-size: 1.1rem;">${b.type}</div>
+                            </div>
+                        </div>
+                        <a href="${b.url}" target="_blank" style="display: inline-block; background: var(--accent); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: 700;" data-i18n="btn_dl">${translations[currentLang]['btn_dl'] || 'Скачать ISO'}</a>
                     </div>
                 </div>
             `;
